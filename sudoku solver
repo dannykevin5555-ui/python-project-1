@@ -1,0 +1,52 @@
+def sudoku_solver(board):
+      row_dict = {}
+      col_dict = {}
+      box_dict = {}
+      empty = []
+      for i in range(0,9):
+          row_dict[i] = set()
+          col_dict[i] = set()
+          box_dict[i] = set()
+      for row in range(0,len(board)):
+          for col in range(0,len(board[row])):
+              if board[row][col] != '.':
+                  box_id = (row//3)*3 + col//3
+                  row_dict[row].add(board[row][col])
+                  col_dict[col].add(board[row][col])
+                  box_dict[box_id].add(board[row][col])
+              elif board[row][col] == '.':
+                  empty.append([row,col])
+
+      def backtrack(index):
+          if index == len(empty):
+              return True
+          row,col = empty[index]
+          for i in range(1,10):
+              if str(i) in row_dict[row] or str(i) in col_dict[col] or str(i) in box_dict[(row//3)*3+col//3]:
+                  continue
+              row_dict[row].add(str(i))
+              col_dict[col].add(str(i))
+              box_dict[(row//3)*3+col//3].add(str(i))
+              board[row][col] = str(i)
+              if backtrack(index+1):
+                  return True
+              row_dict[row].remove(str(i))
+              col_dict[col].remove(str(i))
+              box_dict[(row//3)*3+col//3].remove(str(i))
+              board[row][col] = '.'
+          return False
+      backtrack(0)
+      return board
+print(sudoku_solver([
+    [".","7",".",".","2",".","8",".","."],
+    ["6",".",".",".","3",".",".","7","."],
+    [".","4","8",".",".",".",".",".","."],
+
+    ["7",".",".","2",".",".",".",".","9"],
+    ["5",".",".",".","1",".",".","6","."],
+    [".",".",".",".",".",".",".",".","."],
+
+    [".",".",".","4",".",".",".","8","."],
+    ["2",".",".","5",".",".",".","1","."],
+    ["4",".","5","9",".",".","6",".","."]
+]))
